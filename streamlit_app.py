@@ -36,7 +36,7 @@ st.markdown("---")
 
 uploaded_files = st.file_uploader("Upload Image Files (JPEG, PNG)", type=["jpg", "jpeg", "png"], accept_multiple_files=True)
 
-if st.button("🚀 Start Compression", use_container_width=True):
+if st.button("🚀 Start Compression", width="stretch"):
     if not uploaded_files:
         st.warning("Please upload at least one image to begin.")
     else:
@@ -88,12 +88,12 @@ if st.button("🚀 Start Compression", use_container_width=True):
                         data=zip_buffer.getvalue(),
                         file_name="compressed_images.zip",
                         mime="application/zip",
-                        use_container_width=True
+                        width="stretch"
                     )
 
                     if file_results:
                         st.subheader("Results File by File")
-                        st.dataframe(file_results, use_container_width=True)
+                        st.dataframe(file_results)
                     
                     with st.expander("View Execution Logs & Summary", expanded=False):
                         st.text(stdout_stream.getvalue())
