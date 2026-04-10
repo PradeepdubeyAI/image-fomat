@@ -60,11 +60,20 @@ if st.button("🚀 Start Compression", width="stretch"):
                 cfg["max_size_kb"] = int(max_size)
                 cfg["min_size_kb"] = int(min_size)
                 
+                # Set up UI elements for progress
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+
+                def update_progress(current, total):
+                    progress_frac = current / total
+                    progress_bar.progress(progress_frac)
+                    status_text.info(f"⏳ Processed {current} of {total} images... ({(total - current)} remaining)")
+
                 # Capture the console output
                 stdout_stream = io.StringIO()
                 with contextlib.redirect_stdout(stdout_stream):
                     try:
-                        file_results = image_compressor.run(cfg)
+                        file_results = image_compressor.run(cfg, progress_callback=update_progress)
                         success = True
                         error_msg = ""
                     except Exception as e:
@@ -72,7 +81,8 @@ if st.button("🚀 Start Compression", width="stretch"):
                         error_msg = str(e)
                 
                 if success:
-                    st.success("✅ Compression finished successfully!")
+                    status_text.empty()
+                    st.success(f"✅ Compression finished successfully! Processed {len(uploaded_files)} images.")
                     
                     # Package the compressed images into a single ZIP file
                     zip_buffer = io.BytesIO()

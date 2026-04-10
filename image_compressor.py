@@ -341,7 +341,7 @@ def _process_one(args):
 # ─────────────────────────────────────────────────────────────────────────────
 #   MAIN
 # ─────────────────────────────────────────────────────────────────────────────
-def run(cfg: dict):
+def run(cfg: dict, progress_callback=None):
     in_dir  = Path(cfg["input_folder"])
     out_dir = Path(cfg["output_folder"])
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -394,6 +394,7 @@ def run(cfg: dict):
         iterator = tqdm(iterator, total=total, unit="img", ncols=72)
 
     t0 = time.time()
+    processed_count = 0
     for input_path, result in iterator:
         status     = result["status"]
         orig_kb    = result["original_kb"]
@@ -421,6 +422,10 @@ def run(cfg: dict):
         if not HAS_TQDM:
             print(msg)
         logger.info(msg)
+
+        processed_count += 1
+        if progress_callback:
+            progress_callback(processed_count, total)
 
     elapsed = time.time() - t0
 
